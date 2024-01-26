@@ -1,13 +1,5 @@
 const INPUT: &str = include_str!("./input.txt");
 
-fn main() {
-    println!("Hello, day 1!");
-    let one = calculate_sum(INPUT);
-    println!("Part 1: {}", one.unwrap());
-    let two = calculate_sum_with_written(INPUT);
-    println!("Part 2: {}", two.unwrap())
-}
-
 fn calculate_sum(input: &str) -> Result<i32, std::num::ParseIntError> {
     input
         .lines()
@@ -41,6 +33,14 @@ fn calculate_sum_with_written(input: &str) -> Result<i32, std::num::ParseIntErro
         result = result.replace(from, to);
     }
     calculate_sum(result.as_str())
+}
+
+fn main() {
+    println!("Hello, day 1!");
+    let one = calculate_sum(INPUT);
+    println!("Part 1: {}", one.unwrap());
+    let two = calculate_sum_with_written(INPUT);
+    println!("Part 2: {}", two.unwrap())
 }
 
 #[cfg(test)]
