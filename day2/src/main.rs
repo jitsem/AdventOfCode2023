@@ -18,15 +18,15 @@ impl Game {
         let mut input = input_line.split([':', ';']);
         let id = input
             .next()
-            .ok_or_else(|| "Wrong format")?
+            .ok_or("Wrong format")?
             .split_whitespace()
             .last()
-            .ok_or_else(|| "Wrong format")?
+            .ok_or("Wrong format")?
             .parse()?;
         let draw_res: Result<Vec<Draw>, Box<dyn Error>> =
             input.map(|s| Draw::from(s.trim_start())).collect();
         let draws = draw_res?;
-        Ok(Game { id, draws: draws })
+        Ok(Game { id, draws })
     }
     fn max_red(&self) -> i32 {
         self.draws.iter().map(|d| d.r).max().unwrap_or_default()
@@ -50,10 +50,7 @@ impl Draw {
 
         for ele in input.split(", ") {
             let mut parts = ele.split_whitespace();
-            let value = parts
-                .next()
-                .ok_or_else(|| "Invalid input format")?
-                .parse()?;
+            let value = parts.next().ok_or("Invalid input format")?.parse()?;
             match parts.next() {
                 Some("red") => r = value,
                 Some("green") => g = value,
@@ -83,10 +80,18 @@ fn calculate_sum(input: &str) -> Result<i32, Box<dyn Error>> {
         .try_fold(0, |acc, g| g.map(|n| n.id + acc))
 }
 
+fn calculate_power(input: &str) -> Result<i32, Box<dyn Error>> {
+    input.lines().map(Game::from).try_fold(0, |acc, g| {
+        g.map(|n| acc + (n.max_red() * n.max_blue() * n.max_green()))
+    })
+}
+
 fn main() {
     println!("Hello, day 2!");
     let one = calculate_sum(INPUT);
     println!("Part 1: {}", one.unwrap());
+    let two = calculate_power(INPUT);
+    println!("Part 2: {}", two.unwrap());
 }
 
 #[cfg(test)]
@@ -98,5 +103,11 @@ mod test_input {
     fn test_example1() {
         let sum = calculate_sum(EXAMPLE1);
         assert_eq!(sum.unwrap(), 8);
+    }
+    #[test]
+
+    fn test_example2() {
+        let sum = calculate_power(EXAMPLE1);
+        assert_eq!(sum.unwrap(), 2286);
     }
 }
